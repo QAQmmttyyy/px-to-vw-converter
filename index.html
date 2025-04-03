@@ -424,7 +424,7 @@
           </p>
           <p>
             <strong>新功能：</strong
-            >支持媒体查询包装，可以指定断点宽度和查询类型。
+            >支持媒体查询包装，可以指定断点宽度和查询类型。您可以选择"仅输出转换后的声明"或"保留所有原始CSS"。
           </p>
         </div>
       </header>
@@ -504,6 +504,20 @@
               </div>
             </div>
 
+            <div class="form-group">
+              <div style="display: flex; gap: 10px; align-items: center">
+                <input
+                  type="checkbox"
+                  id="keepAllDeclarations"
+                  style="width: 20px; height: 20px"
+                  aria-label="保留所有声明"
+                />
+                <label for="keepAllDeclarations" style="margin-bottom: 0"
+                  >保留原始CSS（仅转换px值，不删除任何声明）</label
+                >
+              </div>
+            </div>
+
             <button id="convertBtn" class="btn" aria-label="转换按钮">
               转换
             </button>
@@ -569,7 +583,7 @@
               >
             </div>
             <div class="example-block">
-              <p>转换结果：</p>
+              <p>简洁模式结果（默认）：</p>
               <pre>
 .youtube-video-slider-container .swiper-scrollbar {
   height: 0.469vw;
@@ -582,7 +596,19 @@
 
           <div class="example-content" style="margin-top: 20px">
             <div class="example-block">
-              <p>使用媒体查询包装（断点：768px, 类型：max-width）：</p>
+              <p>完整模式结果（勾选"保留原始CSS"）：</p>
+              <pre>
+.youtube-video-slider-container .swiper-scrollbar {
+  height: 0.469vw;
+  background-color: rgba(212, 141, 2, 0.1);
+  border-radius: 0.234vw;
+  position: relative;
+  margin-top: 1.172vw;
+}</pre
+              >
+            </div>
+            <div class="example-block">
+              <p>媒体查询包装示例（max-width: 768px）：</p>
               <pre>
 @media (max-width: 768px) {
   .youtube-video-slider-container .swiper-scrollbar {
@@ -593,6 +619,15 @@
 }</pre
               >
             </div>
+          </div>
+          
+          <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid var(--border-color);">
+            <p><strong>转换过程说明：</strong></p>
+            <ul style="padding-left: 20px; margin: 10px 0;">
+              <li>简洁模式只保留包含px单位的CSS属性（转换为vw后）</li>
+              <li>完整模式保留所有原始CSS属性，仅将px单位转换为vw</li>
+              <li>媒体查询包装可以与任一模式组合使用</li>
+            </ul>
           </div>
         </section>
 
@@ -609,7 +644,7 @@
             <li>更统一的用户体验：在各种设备上保持一致的比例</li>
           </ul>
           <p>
-            本工具可帮助您轻松将现有的px单位CSS转换为vw单位，并可选择性地添加媒体查询包装。
+            本工具可帮助您轻松将现有的px单位CSS转换为vw单位，并可选择性地添加媒体查询包装。您可以选择简洁模式（仅输出转换后的声明）或完整模式（保留所有原始CSS结构）。
           </p>
         </section>
       </main>
@@ -803,6 +838,9 @@
             }
           }
 
+          // 获取是否保留所有声明的选项
+          const keepAllDeclarations = document.getElementById("keepAllDeclarations").checked;
+
           // 显示加载状态
           loading.style.display = "block";
           // 不再隐藏结果容器，只清空内容
@@ -811,7 +849,7 @@
           // 使用setTimeout来确保UI更新
           setTimeout(function () {
             try {
-              let result = convertPxToVw(css, width);
+              let result = convertPxToVw(css, width, keepAllDeclarations);
 
               // 如果启用了媒体查询，添加媒体查询包装
               if (enableMediaQuery) {
@@ -953,7 +991,7 @@
         }
 
         // 使用CSS-Tree库转换px到vw的函数
-        function convertPxToVw(cssText, designWidth) {
+        function convertPxToVw(cssText, designWidth, keepAllDeclarations = false) {
           try {
             // 使用CSS-Tree解析CSS代码
             const ast = csstree.parse(cssText);
@@ -984,46 +1022,57 @@
                   },
                 });
 
-                // 如果声明不包含px，标记为删除
-                if (!hasPx) {
+                // 如果声明不包含px且不保留所有声明，标记为删除
+                if (!hasPx && !keepAllDeclarations) {
                   node.markForRemoval = true;
                 }
               },
             });
 
-            // 移除不包含px的声明
-            csstree.walk(ast, {
-              visit: "Rule",
-              leave: function (node) {
-                if (node.type === "Rule") {
-                  // 过滤出未标记为删除的声明
-                  node.block.children = node.block.children.filter(function (
-                    declaration
-                  ) {
-                    return !declaration.markForRemoval;
-                  });
+            // 如果不保留所有声明，移除不包含px的声明
+            if (!keepAllDeclarations) {
+              // 移除不包含px的声明
+              csstree.walk(ast, {
+                visit: "Rule",
+                leave: function (node) {
+                  if (node.type === "Rule") {
+                    // 过滤出未标记为删除的声明
+                    node.block.children = node.block.children.filter(function (
+                      declaration
+                    ) {
+                      return !declaration.markForRemoval;
+                    });
 
-                  // 如果规则块中没有声明，标记规则为删除
-                  if (node.block.children.isEmpty) {
-                    node.markForRemoval = true;
+                    // 如果规则块中没有声明，标记规则为删除
+                    if (node.block.children.isEmpty) {
+                      node.markForRemoval = true;
+                    }
                   }
-                }
-              },
-            });
+                },
+              });
 
-            // 移除不包含px转换的规则
-            let resultAST = csstree.fromPlainObject(csstree.toPlainObject(ast));
-            resultAST.children = resultAST.children.filter(function (rule) {
-              return !rule.markForRemoval;
-            });
+              // 移除不包含px转换的规则
+              let resultAST = csstree.fromPlainObject(csstree.toPlainObject(ast));
+              resultAST.children = resultAST.children.filter(function (rule) {
+                return !rule.markForRemoval;
+              });
 
-            // 生成CSS代码
-            let result = csstree.generate(resultAST);
+              // 生成CSS代码
+              let result = csstree.generate(resultAST);
+              
+              // 使用Prettier或备选方案格式化CSS
+              result = beautifyWithPrettier(result);
 
-            // 使用Prettier或备选方案格式化CSS
-            result = beautifyWithPrettier(result);
+              return result.trim();
+            } else {
+              // 保留所有声明，只转换px值
+              let result = csstree.generate(ast);
+              
+              // 使用Prettier或备选方案格式化CSS
+              result = beautifyWithPrettier(result);
 
-            return result.trim();
+              return result.trim();
+            }
           } catch (error) {
             console.error("CSS解析错误:", error);
             throw new Error("CSS解析失败，请检查您的CSS语法");
