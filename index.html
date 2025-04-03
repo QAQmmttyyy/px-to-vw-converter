@@ -1,788 +1,860 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>像素(px)转vw单位工具</title>
     <style>
+      :root {
+        --bg-color: #fff;
+        --text-color: #000;
+        --primary-color: #000;
+        --secondary-color: #666;
+        --border-color: #eaeaea;
+        --hover-color: #f5f5f5;
+        --accent-color: #0070f3;
+        --radius: 8px;
+        --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.1);
+        --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          "PingFang SC", "Microsoft YaHei", sans-serif;
+        --font-mono: "Menlo", "Monaco", "Lucida Console", "Liberation Mono",
+          "DejaVu Sans Mono", "Courier New", monospace;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: var(--font-sans);
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        padding: 0;
+        line-height: 1.6;
+      }
+
+      .container {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 30px 20px;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 40px;
+      }
+
+      h1 {
+        font-size: 2rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        margin-bottom: 10px;
+      }
+
+      h2 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 10px;
+      }
+
+      .description {
+        max-width: 60%;
+        margin: 0 auto 40px;
+        color: var(--secondary-color);
+        font-size: 1rem;
+        text-align: center;
+        line-height: 1.7;
+      }
+
+      .card {
+        background-color: var(--bg-color);
+        border-radius: var(--radius);
+        border: 1px solid var(--border-color);
+        box-shadow: var(--shadow-sm);
+        transition: all 0.2s ease;
+        padding: 24px;
+        margin-bottom: 24px;
+      }
+
+      .card:hover {
+        box-shadow: var(--shadow-md);
+      }
+
+      .main-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        font-size: 0.9rem;
+      }
+
+      .input-area {
+        width: 100%;
+        min-height: 350px;
+        padding: 16px;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius);
+        font-family: var(--font-mono);
+        font-size: 14px;
+        resize: vertical;
+        transition: border-color 0.2s ease;
+      }
+
+      .input-area:focus {
+        outline: none;
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 2px rgba(0, 112, 243, 0.1);
+      }
+
+      .width-input {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius);
+        font-size: 14px;
+        transition: all 0.2s ease;
+      }
+
+      .width-input:focus {
+        outline: none;
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 2px rgba(0, 112, 243, 0.1);
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        padding: 12px 24px;
+        background-color: var(--text-color);
+        color: var(--bg-color);
+        border: none;
+        border-radius: var(--radius);
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-align: center;
+      }
+
+      .btn:hover {
+        background-color: #333;
+        transform: translateY(-1px);
+      }
+
+      .btn:active {
+        transform: translateY(0);
+      }
+
+      .result-container {
+        height: 100%;
+        display: block;
+      }
+
+      .result-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+      }
+
+      .result-header label {
+        margin-bottom: 0;
+      }
+
+      .copy-btn {
+        background-color: var(--accent-color);
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: var(--radius);
+        cursor: pointer;
+        font-size: 0.875rem;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-weight: 500;
+        box-shadow: 0 2px 5px rgba(0, 112, 243, 0.2);
+      }
+
+      .copy-btn:hover {
+        background-color: #0051b3;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0, 112, 243, 0.3);
+      }
+
+      .copy-btn:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 3px rgba(0, 112, 243, 0.2);
+      }
+
+      pre {
+        background-color: #fafafa;
+        padding: 16px;
+        border-radius: var(--radius);
+        overflow-x: auto;
+        white-space: pre-wrap;
+        font-family: var(--font-mono);
+        font-size: 14px;
+        line-height: 1.5;
+        min-height: 350px;
+        max-height: 600px;
+        overflow-y: auto;
+        border: 1px solid var(--border-color);
+      }
+
+      .footer {
+        text-align: center;
+        margin-top: 60px;
+        padding-top: 20px;
+        border-top: 1px solid var(--border-color);
+        color: var(--secondary-color);
+        font-size: 0.875rem;
+      }
+
+      .example {
+        margin-top: 40px;
+        padding: 24px;
+        background-color: #fafafa;
+        border-radius: var(--radius);
+        border: 1px solid var(--border-color);
+      }
+
+      .example h3 {
+        margin-bottom: 16px;
+        color: var(--text-color);
+        font-size: 1.25rem;
+        font-weight: 600;
+      }
+
+      .example pre {
+        margin-bottom: 16px;
+        min-height: auto;
+        max-height: 200px;
+      }
+
+      .example-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+      }
+
+      .example-block {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .example-block p {
+        margin-bottom: 8px;
+      }
+
+      .alert {
+        padding: 12px 16px;
+        border-radius: var(--radius);
+        margin: 16px 0;
+        display: none;
+        font-size: 0.875rem;
+        font-weight: 500;
+        animation: fadeIn 0.3s ease-in-out;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .alert-success {
+        background-color: rgba(0, 112, 243, 0.1);
+        border: 1px solid rgba(0, 112, 243, 0.2);
+        color: var(--accent-color);
+      }
+
+      .alert-error {
+        background-color: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+        color: #ef4444;
+      }
+
+      .loading {
+        display: none;
+        text-align: center;
+        margin: 16px 0;
+      }
+
+      .loading-spinner {
+        border: 2px solid rgba(0, 0, 0, 0.1);
+        border-top: 2px solid var(--text-color);
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        animation: spin 0.8s linear infinite;
+        display: inline-block;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* 深色模式支持 */
+      @media (prefers-color-scheme: dark) {
         :root {
-            --bg-color: #fff;
-            --text-color: #000;
-            --primary-color: #000;
-            --secondary-color: #666;
-            --border-color: #eaeaea;
-            --hover-color: #f5f5f5;
-            --accent-color: #0070f3;
-            --radius: 8px;
-            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.1);
-            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
-            --font-mono: 'Menlo', 'Monaco', 'Lucida Console', 'Liberation Mono', 'DejaVu Sans Mono', 'Courier New', monospace;
+          --bg-color: #000;
+          --text-color: #fff;
+          --primary-color: #fff;
+          --secondary-color: #888;
+          --border-color: #333;
+          --hover-color: #111;
         }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: var(--font-sans);
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            padding: 0;
-            line-height: 1.6;
-        }
-        
-        .container {
-            max-width: 1280px;
-            margin: 0 auto;
-            padding: 30px 20px;
-        }
-        
-        header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-        
-        h1 {
-            font-size: 2rem;
-            font-weight: 800;
-            letter-spacing: -0.02em;
-            margin-bottom: 10px;
-        }
-        
-        h2 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-        
-        .description {
-            max-width: 60%;
-            margin: 0 auto 40px;
-            color: var(--secondary-color);
-            font-size: 1rem;
-            text-align: center;
-            line-height: 1.7;
-        }
-        
-        .card {
-            background-color: var(--bg-color);
-            border-radius: var(--radius);
-            border: 1px solid var(--border-color);
-            box-shadow: var(--shadow-sm);
-            transition: all 0.2s ease;
-            padding: 24px;
-            margin-bottom: 24px;
-        }
-        
-        .card:hover {
-            box-shadow: var(--shadow-md);
-        }
-        
-        .main-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 24px;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-        
-        .input-area {
-            width: 100%;
-            min-height: 350px;
-            padding: 16px;
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius);
-            font-family: var(--font-mono);
-            font-size: 14px;
-            resize: vertical;
-            transition: border-color 0.2s ease;
-        }
-        
-        .input-area:focus {
-            outline: none;
-            border-color: var(--accent-color);
-            box-shadow: 0 0 0 2px rgba(0, 112, 243, 0.1);
-        }
-        
-        .width-input {
-            width: 100%;
-            padding: 12px 16px;
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius);
-            font-size: 14px;
-            transition: all 0.2s ease;
-        }
-        
-        .width-input:focus {
-            outline: none;
-            border-color: var(--accent-color);
-            box-shadow: 0 0 0 2px rgba(0, 112, 243, 0.1);
-        }
-        
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            padding: 12px 24px;
-            background-color: var(--text-color);
-            color: var(--bg-color);
-            border: none;
-            border-radius: var(--radius);
-            font-size: 1rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-align: center;
-        }
-        
-        .btn:hover {
-            background-color: #333;
-            transform: translateY(-1px);
-        }
-        
-        .btn:active {
-            transform: translateY(0);
-        }
-        
-        .result-container {
-            height: 100%;
-            display: block;
-        }
-        
-        .result-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-        
-        .result-header label {
-            margin-bottom: 0;
-        }
-        
-        .copy-btn {
-            background-color: var(--accent-color);
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: var(--radius);
-            cursor: pointer;
-            font-size: 0.875rem;
-            transition: all 0.2s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-weight: 500;
-            box-shadow: 0 2px 5px rgba(0, 112, 243, 0.2);
-        }
-        
-        .copy-btn:hover {
-            background-color: #0051b3;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(0, 112, 243, 0.3);
-        }
-        
-        .copy-btn:active {
-            transform: translateY(0);
-            box-shadow: 0 2px 3px rgba(0, 112, 243, 0.2);
-        }
-        
+
         pre {
-            background-color: #fafafa;
-            padding: 16px;
-            border-radius: var(--radius);
-            overflow-x: auto;
-            white-space: pre-wrap;
-            font-family: var(--font-mono);
-            font-size: 14px;
-            line-height: 1.5;
-            min-height: 350px;
-            max-height: 600px;
-            overflow-y: auto;
-            border: 1px solid var(--border-color);
+          background-color: #111;
         }
-        
-        .footer {
-            text-align: center;
-            margin-top: 60px;
-            padding-top: 20px;
-            border-top: 1px solid var(--border-color);
-            color: var(--secondary-color);
-            font-size: 0.875rem;
-        }
-        
+
         .example {
-            margin-top: 40px;
-            padding: 24px;
-            background-color: #fafafa;
-            border-radius: var(--radius);
-            border: 1px solid var(--border-color);
+          background-color: #111;
         }
-        
-        .example h3 {
-            margin-bottom: 16px;
-            color: var(--text-color);
-            font-size: 1.25rem;
-            font-weight: 600;
-        }
-        
-        .example pre {
-            margin-bottom: 16px;
-            min-height: auto;
-            max-height: 200px;
-        }
-        
-        .example-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 24px;
-        }
-        
-        .example-block {
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .example-block p {
-            margin-bottom: 8px;
-        }
-        
-        .alert {
-            padding: 12px 16px;
-            border-radius: var(--radius);
-            margin: 16px 0;
-            display: none;
-            font-size: 0.875rem;
-            font-weight: 500;
-            animation: fadeIn 0.3s ease-in-out;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .alert-success {
-            background-color: rgba(0, 112, 243, 0.1);
-            border: 1px solid rgba(0, 112, 243, 0.2);
-            color: var(--accent-color);
-        }
-        
-        .alert-error {
-            background-color: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.2);
-            color: #ef4444;
-        }
-        
-        .loading {
-            display: none;
-            text-align: center;
-            margin: 16px 0;
-        }
-        
+
         .loading-spinner {
-            border: 2px solid rgba(0, 0, 0, 0.1);
-            border-top: 2px solid var(--text-color);
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            animation: spin 0.8s linear infinite;
-            display: inline-block;
+          border: 2px solid rgba(255, 255, 255, 0.1);
+          border-top: 2px solid var(--text-color);
         }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+      }
+
+      /* 响应式布局 */
+      @media (max-width: 768px) {
+        .main-content {
+          grid-template-columns: 1fr;
         }
-        
-        /* 深色模式支持 */
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --bg-color: #000;
-                --text-color: #fff;
-                --primary-color: #fff;
-                --secondary-color: #888;
-                --border-color: #333;
-                --hover-color: #111;
-            }
-            
-            pre {
-                background-color: #111;
-            }
-            
-            .example {
-                background-color: #111;
-            }
-            
-            .loading-spinner {
-                border: 2px solid rgba(255, 255, 255, 0.1);
-                border-top: 2px solid var(--text-color);
-            }
+
+        h1 {
+          font-size: 2rem;
         }
-        
-        /* 响应式布局 */
-        @media (max-width: 768px) {
-            .main-content {
-                grid-template-columns: 1fr;
-            }
-            
-            h1 {
-                font-size: 2rem;
-            }
-            
-            .container {
-                padding: 20px 16px;
-            }
-            
-            .input-area, pre {
-                min-height: 300px;
-            }
+
+        .container {
+          padding: 20px 16px;
         }
+
+        .input-area,
+        pre {
+          min-height: 300px;
+        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <header>
-            <h1>CSS像素(px)转vw单位工具</h1>
-            <div class="description">
-                <p>一个简单高效的工具，写网页时,可以先按照设计图用px写，再转换为vw，使您的CSS更具响应性。</p>
-                <p>输入您的CSS代码和设计稿宽度，我们将自动为您计算。</p>
-                <p><strong>转换规则：</strong>仅转换包含px单位的属性，转换结果只保留需要转换的规则和包含它的声明块。</p>
-            </div>
-        </header>
-        
-        <div id="alertBox" class="alert"></div>
-        
-        <div class="main-content">
-            <div class="card">
-                <div class="form-group">
-                    <label for="cssInput">输入CSS代码</label>
-                    <textarea id="cssInput" class="input-area" placeholder="请在此粘贴您的CSS代码..." spellcheck="false" autocorrect="off" autocapitalize="off"></textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label for="designWidth">设计稿宽度 (px)</label>
-                    <input type="number" id="designWidth" class="width-input" placeholder="例如：1280" value="1280">
-                </div>
-                
-                <button id="convertBtn" class="btn">转换</button>
-                
-                <div id="loading" class="loading">
-                    <div class="loading-spinner"></div>
-                    <p>正在处理中...</p>
-                </div>
-            </div>
-            
-            <div class="card">
-                <div id="resultContainer" class="result-container">
-                    <div class="result-header">
-                        <label>转换结果</label>
-                        <button id="copyBtn" class="copy-btn">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 4px;">
-                                <path d="M8 4V16C8 16.5304 8.21071 17.0391 8.58579 17.4142C8.96086 17.7893 9.46957 18 10 18H18C18.5304 18 19.0391 17.7893 19.4142 17.4142C19.7893 17.0391 20 16.5304 20 16V7.242C20 6.97556 19.9467 6.71181 19.8433 6.46624C19.7399 6.22068 19.5885 5.99824 19.398 5.812L16.188 2.602C15.8129 2.22698 15.3133 2.0157 14.792 2H10C9.46957 2 8.96086 2.21071 8.58579 2.58579C8.21071 2.96086 8 3.46957 8 4V4Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M16 18V20C16 20.5304 15.7893 21.0391 15.4142 21.4142C15.0391 21.7893 14.5304 22 14 22H6C5.46957 22 4.96086 21.7893 4.58579 21.4142C4.21071 21.0391 4 20.5304 4 20V8C4 7.46957 4.21071 6.96086 4.58579 6.58579C4.96086 6.21071 5.46957 6 6 6H8" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                            复制结果
-                        </button>
-                    </div>
-                    <pre id="resultOutput">/* 转换结果将显示在这里 */</pre>
-                </div>
-            </div>
+      <header>
+        <h1>CSS像素(px)转vw单位工具</h1>
+        <div class="description">
+          <p>
+            一个简单高效的工具，写网页时,可以先按照设计图用px写，再转换为vw，使您的CSS更具响应性。
+          </p>
+          <p>输入您的CSS代码和设计稿宽度，我们将自动为您计算。</p>
+          <p>
+            <strong>转换规则：</strong
+            >仅转换包含px单位的属性，转换结果只保留需要转换的规则和包含它的声明块。
+          </p>
         </div>
-        
-        <div class="example card">
-            <h3>示例</h3>
-            <div class="example-content">
-                <div class="example-block">
-                    <p>输入CSS代码（设计稿宽度：1280px）：</p>
-                    <pre>.youtube-video-slider-container .swiper-scrollbar {
+      </header>
+
+      <div id="alertBox" class="alert"></div>
+
+      <div class="main-content">
+        <div class="card">
+          <div class="form-group">
+            <label for="cssInput">输入CSS代码</label>
+            <textarea
+              id="cssInput"
+              class="input-area"
+              placeholder="请在此粘贴您的CSS代码..."
+              spellcheck="false"
+              autocorrect="off"
+              autocapitalize="off"
+            ></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="designWidth">设计稿宽度 (px)</label>
+            <input
+              type="number"
+              id="designWidth"
+              class="width-input"
+              placeholder="例如：1280"
+              value="1280"
+            />
+          </div>
+
+          <button id="convertBtn" class="btn">转换</button>
+
+          <div id="loading" class="loading">
+            <div class="loading-spinner"></div>
+            <p>正在处理中...</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div id="resultContainer" class="result-container">
+            <div class="result-header">
+              <label>转换结果</label>
+              <button id="copyBtn" class="copy-btn">
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  style="margin-right: 4px"
+                >
+                  <path
+                    d="M8 4V16C8 16.5304 8.21071 17.0391 8.58579 17.4142C8.96086 17.7893 9.46957 18 10 18H18C18.5304 18 19.0391 17.7893 19.4142 17.4142C19.7893 17.0391 20 16.5304 20 16V7.242C20 6.97556 19.9467 6.71181 19.8433 6.46624C19.7399 6.22068 19.5885 5.99824 19.398 5.812L16.188 2.602C15.8129 2.22698 15.3133 2.0157 14.792 2H10C9.46957 2 8.96086 2.21071 8.58579 2.58579C8.21071 2.96086 8 3.46957 8 4V4Z"
+                    stroke="white"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M16 18V20C16 20.5304 15.7893 21.0391 15.4142 21.4142C15.0391 21.7893 14.5304 22 14 22H6C5.46957 22 4.96086 21.7893 4.58579 21.4142C4.21071 21.0391 4 20.5304 4 20V8C4 7.46957 4.21071 6.96086 4.58579 6.58579C4.96086 6.21071 5.46957 6 6 6H8"
+                    stroke="white"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+                复制结果
+              </button>
+            </div>
+            <pre id="resultOutput">/* 转换结果将显示在这里 */</pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="example card">
+        <h3>示例</h3>
+        <div class="example-content">
+          <div class="example-block">
+            <p>输入CSS代码（设计稿宽度：1280px）：</p>
+            <pre>
+.youtube-video-slider-container .swiper-scrollbar {
   height: 6px;
   background-color: rgba(212, 141, 2, 0.1);
   border-radius: 3px;
   position: relative;
   margin-top: 15px;
-}</pre>
-                </div>
-                <div class="example-block">
-                    <p>转换结果：</p>
-                    <pre>.youtube-video-slider-container .swiper-scrollbar {
+}</pre
+            >
+          </div>
+          <div class="example-block">
+            <p>转换结果：</p>
+            <pre>
+.youtube-video-slider-container .swiper-scrollbar {
   height: 0.469vw;
   border-radius: 0.234vw;
   margin-top: 1.172vw;
-}</pre>
-                </div>
-            </div>
+}</pre
+            >
+          </div>
         </div>
-        
-        <div class="footer">
-            <p>基于CSS-Tree解析库，能准确处理各种复杂CSS规则和选择器</p>
-        </div>
+      </div>
+
+      <div class="footer">
+        <p>基于CSS-Tree解析库，能准确处理各种复杂CSS规则和选择器</p>
+      </div>
     </div>
-    
+
     <!-- 引入CSS解析库 - 使用多个CDN源 -->
     <script>
-        // 检查CSS-Tree库是否加载成功的函数
-        function isCSSTreeLoaded() {
-            return typeof csstree !== 'undefined';
+      // 检查CSS-Tree库是否加载成功的函数
+      function isCSSTreeLoaded() {
+        return typeof csstree !== "undefined";
+      }
+
+      // 尝试从不同CDN加载CSS-Tree库
+      function loadCSSTreeFromCDN(cdnUrls, currentIndex = 0) {
+        if (currentIndex >= cdnUrls.length) {
+          console.warn("所有CDN加载失败");
+          const descriptionEl = document.querySelector(".description");
+          const parserInfoEl = document.createElement("p");
+          parserInfoEl.innerHTML =
+            "<strong>错误：</strong>CSS解析库加载失败，请检查网络连接或稍后再试。";
+          parserInfoEl.style.color = "#ff4d4f";
+          descriptionEl.appendChild(parserInfoEl);
+
+          // 禁用转换按钮
+          document.getElementById("convertBtn").disabled = true;
+          document.getElementById("convertBtn").textContent = "无法加载解析库";
+          return;
         }
-        
-        // 尝试从不同CDN加载CSS-Tree库
-        function loadCSSTreeFromCDN(cdnUrls, currentIndex = 0) {
-            if (currentIndex >= cdnUrls.length) {
-                console.warn('所有CDN加载失败');
-                const descriptionEl = document.querySelector('.description');
-                const parserInfoEl = document.createElement('p');
-                parserInfoEl.innerHTML = '<strong>错误：</strong>CSS解析库加载失败，请检查网络连接或稍后再试。';
-                parserInfoEl.style.color = '#ff4d4f';
-                descriptionEl.appendChild(parserInfoEl);
-                
-                // 禁用转换按钮
-                document.getElementById('convertBtn').disabled = true;
-                document.getElementById('convertBtn').textContent = '无法加载解析库';
-                return;
+
+        const script = document.createElement("script");
+        script.src = cdnUrls[currentIndex];
+        script.onload = function () {
+          console.log("CSS-Tree库加载成功: " + cdnUrls[currentIndex]);
+          // CSS-Tree加载成功，初始化工具
+          initializeTool();
+        };
+        script.onerror = function () {
+          console.warn("CSS-Tree库加载失败: " + cdnUrls[currentIndex]);
+          // 尝试下一个CDN
+          loadCSSTreeFromCDN(cdnUrls, currentIndex + 1);
+        };
+        document.body.appendChild(script);
+      }
+
+      // CSS-Tree的CDN源列表
+      const cssTreeCDNs = [
+        "https://unpkg.com/css-tree@2.3.1/dist/csstree.min.js",
+        "https://cdnjs.cloudflare.com/ajax/libs/css-tree/2.3.1/csstree.min.js",
+        "https://fastly.jsdelivr.net/npm/css-tree@2.3.1/dist/csstree.min.js",
+      ];
+
+      // 开始尝试加载CSS-Tree
+      loadCSSTreeFromCDN(cssTreeCDNs);
+
+      // 加载Prettier库用于美化CSS
+      function loadPrettier() {
+        return new Promise((resolve, reject) => {
+          // 如果已经加载，直接返回
+          if (
+            typeof prettier !== "undefined" &&
+            typeof prettierPlugins !== "undefined"
+          ) {
+            resolve();
+            return;
+          }
+
+          // 多个CDN源
+          const cdnSources = [
+            {
+              prettierUrl:
+                "https://cdnjs.cloudflare.com/ajax/libs/prettier/2.8.8/standalone.min.js",
+              pluginsUrl:
+                "https://cdnjs.cloudflare.com/ajax/libs/prettier/2.8.8/parser-postcss.min.js",
+            },
+            {
+              prettierUrl: "https://unpkg.com/prettier@2.8.8/standalone.js",
+              pluginsUrl: "https://unpkg.com/prettier@2.8.8/parser-postcss.js",
+            },
+            {
+              prettierUrl:
+                "https://cdn.jsdelivr.net/npm/prettier@2.8.8/standalone.min.js",
+              pluginsUrl:
+                "https://cdn.jsdelivr.net/npm/prettier@2.8.8/parser-postcss.min.js",
+            },
+          ];
+
+          let currentSourceIndex = 0;
+
+          function tryLoadSource(index) {
+            if (index >= cdnSources.length) {
+              console.warn("所有Prettier CDN源加载失败");
+              reject(new Error("无法加载Prettier"));
+              return;
             }
-            
-            const script = document.createElement('script');
-            script.src = cdnUrls[currentIndex];
-            script.onload = function() {
-                console.log('CSS-Tree库加载成功: ' + cdnUrls[currentIndex]);
-                // CSS-Tree加载成功，初始化工具
-                initializeTool();
+
+            const source = cdnSources[index];
+            console.log("尝试加载Prettier从:", source.prettierUrl);
+
+            // 首先加载Prettier核心
+            const prettierScript = document.createElement("script");
+            prettierScript.src = source.prettierUrl;
+
+            prettierScript.onload = function () {
+              console.log("Prettier核心加载成功");
+
+              // 然后加载CSS解析插件
+              const pluginScript = document.createElement("script");
+              pluginScript.src = source.pluginsUrl;
+
+              pluginScript.onload = function () {
+                console.log("Prettier CSS插件加载成功");
+                resolve();
+              };
+
+              pluginScript.onerror = function () {
+                console.warn("Prettier CSS插件加载失败，尝试下一个源");
+                tryLoadSource(index + 1);
+              };
+
+              document.body.appendChild(pluginScript);
             };
-            script.onerror = function() {
-                console.warn('CSS-Tree库加载失败: ' + cdnUrls[currentIndex]);
-                // 尝试下一个CDN
-                loadCSSTreeFromCDN(cdnUrls, currentIndex + 1);
+
+            prettierScript.onerror = function () {
+              console.warn("Prettier核心加载失败，尝试下一个源");
+              tryLoadSource(index + 1);
             };
-            document.body.appendChild(script);
+
+            document.body.appendChild(prettierScript);
+          }
+
+          // 开始尝试加载
+          tryLoadSource(0);
+        });
+      }
+
+      // 初始化工具
+      function initializeTool() {
+        const cssInput = document.getElementById("cssInput");
+        const designWidth = document.getElementById("designWidth");
+        const convertBtn = document.getElementById("convertBtn");
+        const resultOutput = document.getElementById("resultOutput");
+        const resultContainer = document.getElementById("resultContainer");
+        const copyBtn = document.getElementById("copyBtn");
+        const alertBox = document.getElementById("alertBox");
+        const loading = document.getElementById("loading");
+
+        // 预加载Prettier库
+        loadPrettier().catch((error) => {
+          console.warn("Prettier加载失败:", error);
+        });
+
+        // 转换按钮点击事件
+        convertBtn.addEventListener("click", function () {
+          const css = cssInput.value.trim();
+          const width = parseFloat(designWidth.value);
+
+          if (!css) {
+            showAlert("请输入CSS代码", "error");
+            return;
+          }
+
+          if (!width || isNaN(width) || width <= 0) {
+            showAlert("请输入有效的设计稿宽度", "error");
+            return;
+          }
+
+          // 显示加载状态
+          loading.style.display = "block";
+          // 不再隐藏结果容器，只清空内容
+          resultOutput.textContent = "处理中...";
+
+          // 使用setTimeout来确保UI更新
+          setTimeout(function () {
+            try {
+              const result = convertPxToVw(css, width);
+              resultOutput.textContent = result;
+              showAlert("转换成功！", "success");
+            } catch (error) {
+              resultOutput.textContent = "发生错误: " + error.message;
+              showAlert("转换失败：" + error.message, "error");
+            } finally {
+              loading.style.display = "none";
+            }
+          }, 50);
+        });
+
+        // 复制按钮点击事件
+        copyBtn.addEventListener("click", function () {
+          const textToCopy = resultOutput.textContent;
+          navigator.clipboard.writeText(textToCopy).then(
+            function () {
+              showAlert("已复制到剪贴板！", "success");
+            },
+            function () {
+              showAlert("复制失败，请手动复制", "error");
+            }
+          );
+        });
+
+        // 显示提示消息
+        function showAlert(message, type) {
+          alertBox.textContent = message;
+          alertBox.className = "alert alert-" + type;
+          alertBox.style.display = "block";
+
+          // 3秒后自动隐藏
+          setTimeout(function () {
+            alertBox.style.display = "none";
+          }, 3000);
         }
-        
-        // CSS-Tree的CDN源列表
-        const cssTreeCDNs = [
-            'https://unpkg.com/css-tree@2.3.1/dist/csstree.min.js',
-            'https://cdnjs.cloudflare.com/ajax/libs/css-tree/2.3.1/csstree.min.js',
-            'https://fastly.jsdelivr.net/npm/css-tree@2.3.1/dist/csstree.min.js'
-        ];
-        
-        // 开始尝试加载CSS-Tree
-        loadCSSTreeFromCDN(cssTreeCDNs);
-        
-        // 加载Prettier库用于美化CSS
-        function loadPrettier() {
-            return new Promise((resolve, reject) => {
-                // 如果已经加载，直接返回
-                if (typeof prettier !== 'undefined' && typeof prettierPlugins !== 'undefined') {
-                    resolve();
-                    return;
-                }
-                
-                // 多个CDN源
-                const cdnSources = [
-                    {
-                        prettierUrl: 'https://cdnjs.cloudflare.com/ajax/libs/prettier/2.8.8/standalone.min.js',
-                        pluginsUrl: 'https://cdnjs.cloudflare.com/ajax/libs/prettier/2.8.8/parser-postcss.min.js'
-                    },
-                    {
-                        prettierUrl: 'https://unpkg.com/prettier@2.8.8/standalone.js',
-                        pluginsUrl: 'https://unpkg.com/prettier@2.8.8/parser-postcss.js'
-                    },
-                    {
-                        prettierUrl: 'https://cdn.jsdelivr.net/npm/prettier@2.8.8/standalone.min.js',
-                        pluginsUrl: 'https://cdn.jsdelivr.net/npm/prettier@2.8.8/parser-postcss.min.js'
-                    }
-                ];
-                
-                let currentSourceIndex = 0;
-                
-                function tryLoadSource(index) {
-                    if (index >= cdnSources.length) {
-                        console.warn('所有Prettier CDN源加载失败');
-                        reject(new Error('无法加载Prettier'));
-                        return;
-                    }
-                    
-                    const source = cdnSources[index];
-                    console.log('尝试加载Prettier从:', source.prettierUrl);
-                    
-                    // 首先加载Prettier核心
-                    const prettierScript = document.createElement('script');
-                    prettierScript.src = source.prettierUrl;
-                    
-                    prettierScript.onload = function() {
-                        console.log('Prettier核心加载成功');
-                        
-                        // 然后加载CSS解析插件
-                        const pluginScript = document.createElement('script');
-                        pluginScript.src = source.pluginsUrl;
-                        
-                        pluginScript.onload = function() {
-                            console.log('Prettier CSS插件加载成功');
-                            resolve();
-                        };
-                        
-                        pluginScript.onerror = function() {
-                            console.warn('Prettier CSS插件加载失败，尝试下一个源');
-                            tryLoadSource(index + 1);
-                        };
-                        
-                        document.body.appendChild(pluginScript);
-                    };
-                    
-                    prettierScript.onerror = function() {
-                        console.warn('Prettier核心加载失败，尝试下一个源');
-                        tryLoadSource(index + 1);
-                    };
-                    
-                    document.body.appendChild(prettierScript);
-                }
-                
-                // 开始尝试加载
-                tryLoadSource(0);
-            });
+
+        // 使用Prettier美化CSS代码
+        function beautifyWithPrettier(css) {
+          try {
+            if (
+              typeof prettier !== "undefined" &&
+              typeof prettierPlugins !== "undefined"
+            ) {
+              return prettier.format(css, {
+                parser: "css",
+                plugins: prettierPlugins,
+                tabWidth: 2,
+                useTabs: false,
+                printWidth: 80,
+              });
+            } else {
+              return beautifyCSS(css); // 使用备选的内置格式化函数
+            }
+          } catch (error) {
+            console.warn("Prettier格式化失败:", error);
+            return beautifyCSS(css); // 回退到内置格式化
+          }
         }
-        
-        // 初始化工具
-        function initializeTool() {
-            const cssInput = document.getElementById('cssInput');
-            const designWidth = document.getElementById('designWidth');
-            const convertBtn = document.getElementById('convertBtn');
-            const resultOutput = document.getElementById('resultOutput');
-            const resultContainer = document.getElementById('resultContainer');
-            const copyBtn = document.getElementById('copyBtn');
-            const alertBox = document.getElementById('alertBox');
-            const loading = document.getElementById('loading');
-            
-            // 预加载Prettier库
-            loadPrettier().catch(error => {
-                console.warn('Prettier加载失败:', error);
-            });
-            
-            // 转换按钮点击事件
-            convertBtn.addEventListener('click', function() {
-                const css = cssInput.value.trim();
-                const width = parseFloat(designWidth.value);
-                
-                if (!css) {
-                    showAlert('请输入CSS代码', 'error');
-                    return;
-                }
-                
-                if (!width || isNaN(width) || width <= 0) {
-                    showAlert('请输入有效的设计稿宽度', 'error');
-                    return;
-                }
-                
-                // 显示加载状态
-                loading.style.display = 'block';
-                // 不再隐藏结果容器，只清空内容
-                resultOutput.textContent = '处理中...';
-                
-                // 使用setTimeout来确保UI更新
-                setTimeout(function() {
-                    try {
-                        const result = convertPxToVw(css, width);
-                        resultOutput.textContent = result;
-                        showAlert('转换成功！', 'success');
-                    } catch (error) {
-                        resultOutput.textContent = '发生错误: ' + error.message;
-                        showAlert('转换失败：' + error.message, 'error');
-                    } finally {
-                        loading.style.display = 'none';
+
+        // 内联实现的CSS美化函数(作为备选)
+        function beautifyCSS(css) {
+          // 第一步：清理输入
+          css = css.trim();
+
+          // 第二步：规范化空格和换行
+          // 移除多余空格
+          css = css.replace(/\s+/g, " ");
+          // 在左大括号前添加空格
+          css = css.replace(/\{/g, " {");
+          // 在冒号后添加空格
+          css = css.replace(/:/g, ": ");
+          // 确保分号后有空格
+          css = css.replace(/;(\S)/g, "; $1");
+          // 移除分号和右大括号前的空格
+          css = css.replace(/\s+;/g, ";");
+          css = css.replace(/\s+\}/g, "}");
+
+          // 第三步：添加换行和缩进
+          let formatted = "";
+          let indentLevel = 0;
+
+          // 按字符处理以添加适当的换行和缩进
+          for (let i = 0; i < css.length; i++) {
+            const char = css.charAt(i);
+
+            if (char === "{") {
+              formatted += " {\n";
+              indentLevel++;
+              // 添加下一行的缩进
+              formatted += "  ".repeat(indentLevel);
+            } else if (char === "}") {
+              formatted = formatted.trimRight();
+              formatted += "\n";
+              indentLevel--;
+              formatted += "  ".repeat(indentLevel) + "}";
+              // 规则之间添加空行
+              formatted += "\n\n";
+              if (indentLevel > 0) {
+                formatted += "  ".repeat(indentLevel);
+              }
+            } else if (char === ";") {
+              formatted += ";\n";
+              // 添加下一行的缩进
+              formatted += "  ".repeat(indentLevel);
+            } else if (char === "\n") {
+              // 忽略原始换行，我们自己添加
+              continue;
+            } else {
+              formatted += char;
+            }
+          }
+
+          // 修复可能的格式问题
+          // 移除多余的空行
+          formatted = formatted.replace(/\n\s*\n/g, "\n\n");
+          // 移除结尾的空格
+          formatted = formatted.replace(/\s+$/gm, "");
+
+          return formatted.trim();
+        }
+
+        // 使用CSS-Tree库转换px到vw的函数
+        function convertPxToVw(cssText, designWidth) {
+          try {
+            // 使用CSS-Tree解析CSS代码
+            const ast = csstree.parse(cssText);
+
+            // 遍历AST，查找并转换px值
+            csstree.walk(ast, {
+              visit: "Declaration",
+              enter: function (node) {
+                // 检查值是否包含px
+                let hasPx = false;
+
+                csstree.walk(node.value, {
+                  visit: "Dimension",
+                  enter: function (dimensionNode) {
+                    // 检查是否是px单位
+                    if (dimensionNode.unit.toLowerCase() === "px") {
+                      hasPx = true;
+                      // 将px转换为vw
+                      const pxValue = parseFloat(dimensionNode.value);
+                      const vwValue = ((pxValue / designWidth) * 100)
+                        .toFixed(3)
+                        .replace(/\.?0+$/, "");
+
+                      // 修改节点值和单位
+                      dimensionNode.value = vwValue;
+                      dimensionNode.unit = "vw";
                     }
-                }, 50);
-            });
-            
-            // 复制按钮点击事件
-            copyBtn.addEventListener('click', function() {
-                const textToCopy = resultOutput.textContent;
-                navigator.clipboard.writeText(textToCopy).then(function() {
-                    showAlert('已复制到剪贴板！', 'success');
-                }, function() {
-                    showAlert('复制失败，请手动复制', 'error');
+                  },
                 });
+
+                // 如果声明不包含px，标记为删除
+                if (!hasPx) {
+                  node.markForRemoval = true;
+                }
+              },
             });
-            
-            // 显示提示消息
-            function showAlert(message, type) {
-                alertBox.textContent = message;
-                alertBox.className = 'alert alert-' + type;
-                alertBox.style.display = 'block';
-                
-                // 3秒后自动隐藏
-                setTimeout(function() {
-                    alertBox.style.display = 'none';
-                }, 3000);
-            }
-            
-            // 使用Prettier美化CSS代码
-            function beautifyWithPrettier(css) {
-                try {
-                    if (typeof prettier !== 'undefined' && typeof prettierPlugins !== 'undefined') {
-                        return prettier.format(css, {
-                            parser: 'css',
-                            plugins: prettierPlugins,
-                            tabWidth: 2,
-                            useTabs: false,
-                            printWidth: 80
-                        });
-                    } else {
-                        return beautifyCSS(css); // 使用备选的内置格式化函数
-                    }
-                } catch (error) {
-                    console.warn('Prettier格式化失败:', error);
-                    return beautifyCSS(css); // 回退到内置格式化
+
+            // 移除不包含px的声明
+            csstree.walk(ast, {
+              visit: "Rule",
+              leave: function (node) {
+                if (node.type === "Rule") {
+                  // 过滤出未标记为删除的声明
+                  node.block.children = node.block.children.filter(function (
+                    declaration
+                  ) {
+                    return !declaration.markForRemoval;
+                  });
+
+                  // 如果规则块中没有声明，标记规则为删除
+                  if (node.block.children.isEmpty) {
+                    node.markForRemoval = true;
+                  }
                 }
-            }
-            
-            // 内联实现的CSS美化函数(作为备选)
-            function beautifyCSS(css) {
-                // 第一步：清理输入
-                css = css.trim();
-                
-                // 第二步：规范化空格和换行
-                // 移除多余空格
-                css = css.replace(/\s+/g, ' ');
-                // 在左大括号前添加空格
-                css = css.replace(/\{/g, ' {');
-                // 在冒号后添加空格
-                css = css.replace(/:/g, ': ');
-                // 确保分号后有空格
-                css = css.replace(/;(\S)/g, '; $1');
-                // 移除分号和右大括号前的空格
-                css = css.replace(/\s+;/g, ';');
-                css = css.replace(/\s+\}/g, '}');
-                
-                // 第三步：添加换行和缩进
-                let formatted = '';
-                let indentLevel = 0;
-                
-                // 按字符处理以添加适当的换行和缩进
-                for (let i = 0; i < css.length; i++) {
-                    const char = css.charAt(i);
-                    
-                    if (char === '{') {
-                        formatted += ' {\n';
-                        indentLevel++;
-                        // 添加下一行的缩进
-                        formatted += '  '.repeat(indentLevel);
-                    } else if (char === '}') {
-                        formatted = formatted.trimRight();
-                        formatted += '\n';
-                        indentLevel--;
-                        formatted += '  '.repeat(indentLevel) + '}';
-                        // 规则之间添加空行
-                        formatted += '\n\n';
-                        if (indentLevel > 0) {
-                            formatted += '  '.repeat(indentLevel);
-                        }
-                    } else if (char === ';') {
-                        formatted += ';\n';
-                        // 添加下一行的缩进
-                        formatted += '  '.repeat(indentLevel);
-                    } else if (char === '\n') {
-                        // 忽略原始换行，我们自己添加
-                        continue;
-                    } else {
-                        formatted += char;
-                    }
-                }
-                
-                // 修复可能的格式问题
-                // 移除多余的空行
-                formatted = formatted.replace(/\n\s*\n/g, '\n\n');
-                // 移除结尾的空格
-                formatted = formatted.replace(/\s+$/gm, '');
-                
-                return formatted.trim();
-            }
-            
-            // 使用CSS-Tree库转换px到vw的函数
-            function convertPxToVw(cssText, designWidth) {
-                try {
-                    // 使用CSS-Tree解析CSS代码
-                    const ast = csstree.parse(cssText);
-                    
-                    // 遍历AST，查找并转换px值
-                    csstree.walk(ast, {
-                        visit: 'Declaration',
-                        enter: function(node) {
-                            // 检查值是否包含px
-                            let hasPx = false;
-                            
-                            csstree.walk(node.value, {
-                                visit: 'Dimension',
-                                enter: function(dimensionNode) {
-                                    // 检查是否是px单位
-                                    if (dimensionNode.unit.toLowerCase() === 'px') {
-                                        hasPx = true;
-                                        // 将px转换为vw
-                                        const pxValue = parseFloat(dimensionNode.value);
-                                        const vwValue = (pxValue / designWidth * 100).toFixed(3).replace(/\.?0+$/, '');
-                                        
-                                        // 修改节点值和单位
-                                        dimensionNode.value = vwValue;
-                                        dimensionNode.unit = 'vw';
-                                    }
-                                }
-                            });
-                            
-                            // 如果声明不包含px，标记为删除
-                            if (!hasPx) {
-                                node.markForRemoval = true;
-                            }
-                        }
-                    });
-                    
-                    // 移除不包含px的声明
-                    csstree.walk(ast, {
-                        visit: 'Rule',
-                        leave: function(node) {
-                            if (node.type === 'Rule') {
-                                // 过滤出未标记为删除的声明
-                                node.block.children = node.block.children.filter(function(declaration) {
-                                    return !declaration.markForRemoval;
-                                });
-                                
-                                // 如果规则块中没有声明，标记规则为删除
-                                if (node.block.children.isEmpty) {
-                                    node.markForRemoval = true;
-                                }
-                            }
-                        }
-                    });
-                    
-                    // 移除不包含px转换的规则
-                    let resultAST = csstree.fromPlainObject(csstree.toPlainObject(ast));
-                    resultAST.children = resultAST.children.filter(function(rule) {
-                        return !rule.markForRemoval;
-                    });
-                    
-                    // 生成CSS代码
-                    let result = csstree.generate(resultAST);
-                    
-                    // 使用Prettier或备选方案格式化CSS
-                    result = beautifyWithPrettier(result);
-                    
-                    return result.trim();
-                } catch (error) {
-                    console.error('CSS解析错误:', error);
-                    throw new Error('CSS解析失败，请检查您的CSS语法');
-                }
-            }
+              },
+            });
+
+            // 移除不包含px转换的规则
+            let resultAST = csstree.fromPlainObject(csstree.toPlainObject(ast));
+            resultAST.children = resultAST.children.filter(function (rule) {
+              return !rule.markForRemoval;
+            });
+
+            // 生成CSS代码
+            let result = csstree.generate(resultAST);
+
+            // 使用Prettier或备选方案格式化CSS
+            result = beautifyWithPrettier(result);
+
+            return result.trim();
+          } catch (error) {
+            console.error("CSS解析错误:", error);
+            throw new Error("CSS解析失败，请检查您的CSS语法");
+          }
         }
+      }
     </script>
-</body>
-</html> 
+  </body>
+</html>
