@@ -5,197 +5,321 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>像素(px)转vw单位工具</title>
     <style>
+        :root {
+            --bg-color: #fff;
+            --text-color: #000;
+            --primary-color: #000;
+            --secondary-color: #666;
+            --border-color: #eaeaea;
+            --hover-color: #f5f5f5;
+            --accent-color: #0070f3;
+            --radius: 8px;
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.1);
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            --font-mono: 'Menlo', 'Monaco', 'Lucida Console', 'Liberation Mono', 'DejaVu Sans Mono', 'Courier New', monospace;
+        }
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+        
         body {
-            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
-            background-color: #f5f5f5;
-            color: #333;
-            padding: 20px;
-        }
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-        }
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
-            color: #1890ff;
-            font-size: 24px;
-        }
-        h2 {
-            font-size: 16px;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 8px;
-        }
-        .description {
-            margin-bottom: 20px;
-            padding: 10px;
-            background-color: #f0f7ff;
-            border-radius: 4px;
-            font-size: 14px;
+            font-family: var(--font-sans);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 0;
             line-height: 1.6;
         }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 10px;
+        }
+        
+        h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .description {
+            max-width: 600px;
+            margin: 0 auto 40px;
+            color: var(--secondary-color);
+            font-size: 1rem;
+            text-align: center;
+            line-height: 1.7;
+        }
+        
+        .card {
+            background-color: var(--bg-color);
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s ease;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        
+        .card:hover {
+            box-shadow: var(--shadow-md);
+        }
+        
         .main-content {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
         }
-        .input-section, .output-section {
-            flex: 1;
-            min-width: 300px;
-        }
+        
         .form-group {
             margin-bottom: 20px;
         }
+        
         label {
             display: block;
             margin-bottom: 8px;
-            font-weight: bold;
-            font-size: 16px;
+            font-weight: 500;
+            font-size: 0.9rem;
         }
+        
         .input-area {
             width: 100%;
-            min-height: 400px;
-            padding: 12px;
-            border: 1px solid #d9d9d9;
-            border-radius: 4px;
-            font-family: 'Consolas', monospace;
+            min-height: 350px;
+            padding: 16px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            font-family: var(--font-mono);
             font-size: 14px;
             resize: vertical;
+            transition: border-color 0.2s ease;
         }
+        
+        .input-area:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 2px rgba(0, 112, 243, 0.1);
+        }
+        
         .width-input {
             width: 100%;
-            padding: 8px;
-            border: 1px solid #d9d9d9;
-            border-radius: 4px;
+            padding: 12px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
             font-size: 14px;
+            transition: all 0.2s ease;
         }
+        
+        .width-input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 2px rgba(0, 112, 243, 0.1);
+        }
+        
         .btn {
-            display: block;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             width: 100%;
-            padding: 10px;
-            background-color: #1890ff;
-            color: white;
+            padding: 12px 24px;
+            background-color: var(--text-color);
+            color: var(--bg-color);
             border: none;
-            border-radius: 4px;
-            font-size: 16px;
+            border-radius: var(--radius);
+            font-size: 1rem;
+            font-weight: 500;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: all 0.2s ease;
+            text-align: center;
         }
+        
         .btn:hover {
-            background-color: #40a9ff;
+            background-color: #333;
+            transform: translateY(-1px);
         }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
         .result-container {
             height: 100%;
             display: block;
         }
+        
         .result-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 16px;
         }
+        
         .copy-btn {
-            background-color: #52c41a;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 4px;
+            background-color: transparent;
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 8px 16px;
+            border-radius: var(--radius);
             cursor: pointer;
-            font-size: 14px;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
+        
         .copy-btn:hover {
-            background-color: #73d13d;
+            background-color: var(--hover-color);
+            border-color: var(--secondary-color);
         }
+        
         pre {
-            background-color: #f6f8fa;
-            padding: 15px;
-            border-radius: 4px;
+            background-color: #fafafa;
+            padding: 16px;
+            border-radius: var(--radius);
             overflow-x: auto;
             white-space: pre-wrap;
-            font-family: 'Consolas', monospace;
+            font-family: var(--font-mono);
             font-size: 14px;
             line-height: 1.5;
-            min-height: 400px;
+            min-height: 350px;
             max-height: 600px;
             overflow-y: auto;
-            border: 1px solid #e8e8e8;
+            border: 1px solid var(--border-color);
         }
+        
         .footer {
             text-align: center;
-            margin-top: 20px;
-            font-size: 14px;
-            color: #999;
+            margin-top: 60px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            color: var(--secondary-color);
+            font-size: 0.875rem;
         }
+        
         .example {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #f9f9f9;
-            border-radius: 4px;
-            border-left: 4px solid #1890ff;
+            margin-top: 40px;
+            padding: 24px;
+            background-color: #fafafa;
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
         }
+        
         .example h3 {
-            margin-bottom: 10px;
-            color: #1890ff;
-            font-size: 16px;
+            margin-bottom: 16px;
+            color: var(--text-color);
+            font-size: 1.25rem;
+            font-weight: 600;
         }
+        
         .example pre {
-            margin-bottom: 10px;
+            margin-bottom: 16px;
             min-height: auto;
             max-height: 200px;
         }
+        
         .alert {
-            padding: 8px 12px;
-            border-radius: 4px;
-            margin: 10px 0;
+            padding: 12px 16px;
+            border-radius: var(--radius);
+            margin: 16px 0;
             display: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            animation: fadeIn 0.3s ease-in-out;
         }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
         .alert-success {
-            background-color: #f6ffed;
-            border: 1px solid #b7eb8f;
-            color: #52c41a;
+            background-color: rgba(0, 112, 243, 0.1);
+            border: 1px solid rgba(0, 112, 243, 0.2);
+            color: var(--accent-color);
         }
+        
         .alert-error {
-            background-color: #fff2f0;
-            border: 1px solid #ffccc7;
-            color: #ff4d4f;
+            background-color: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: #ef4444;
         }
+        
         .loading {
             display: none;
             text-align: center;
-            margin: 10px 0;
+            margin: 16px 0;
         }
+        
         .loading-spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #1890ff;
+            border: 2px solid rgba(0, 0, 0, 0.1);
+            border-top: 2px solid var(--text-color);
             border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            animation: spin 2s linear infinite;
+            width: 24px;
+            height: 24px;
+            animation: spin 0.8s linear infinite;
             display: inline-block;
         }
+        
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
         
+        /* 深色模式支持 */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #000;
+                --text-color: #fff;
+                --primary-color: #fff;
+                --secondary-color: #888;
+                --border-color: #333;
+                --hover-color: #111;
+            }
+            
+            pre {
+                background-color: #111;
+            }
+            
+            .example {
+                background-color: #111;
+            }
+            
+            .loading-spinner {
+                border: 2px solid rgba(255, 255, 255, 0.1);
+                border-top: 2px solid var(--text-color);
+            }
+        }
+        
         /* 响应式布局 */
         @media (max-width: 768px) {
             .main-content {
-                flex-direction: column;
+                grid-template-columns: 1fr;
             }
-            .input-section, .output-section {
-                width: 100%;
+            
+            h1 {
+                font-size: 2rem;
             }
+            
+            .container {
+                padding: 20px 16px;
+            }
+            
             .input-area, pre {
                 min-height: 300px;
             }
@@ -204,25 +328,25 @@
 </head>
 <body>
     <div class="container">
-        <h1>CSS像素(px)转vw单位工具</h1>
-        
-        <div class="description">
-            <p>此工具可将CSS中的px单位转换为vw单位，使您的CSS更具响应性。输入您的CSS代码和设计稿宽度，工具将自动进行计算并输出转换后的结果。</p>
-            <p>转换规则：仅转换包含px单位的属性，其他属性将被忽略。计算公式：vw值 = px值 / 设计稿宽度 * 100。</p>
-            <p>工具使用专业的CSS解析库，能处理复杂的CSS语法和选择器。</p>
-        </div>
+        <header>
+            <h1>CSS像素(px)转vw单位工具</h1>
+            <div class="description">
+                <p>一个简单高效的工具，写网页时,可以先按照设计图用px写，再转换为vw，使您的CSS更具响应性。输入您的CSS代码和设计稿宽度，我们将自动为您计算。</p>
+                <p><strong>转换规则：</strong>仅转换包含px单位的属性，转换结果只保留需要转换的规则和包含它的声明块。</p>
+            </div>
+        </header>
         
         <div id="alertBox" class="alert"></div>
         
         <div class="main-content">
-            <div class="input-section">
+            <div class="card">
                 <div class="form-group">
-                    <label for="cssInput">输入CSS代码：</label>
+                    <label for="cssInput">输入CSS代码</label>
                     <textarea id="cssInput" class="input-area" placeholder="请在此粘贴您的CSS代码..."></textarea>
                 </div>
                 
                 <div class="form-group">
-                    <label for="designWidth">设计稿宽度(px)：</label>
+                    <label for="designWidth">设计稿宽度 (px)</label>
                     <input type="number" id="designWidth" class="width-input" placeholder="例如：1280" value="1280">
                 </div>
                 
@@ -234,19 +358,25 @@
                 </div>
             </div>
             
-            <div class="output-section">
+            <div class="card">
                 <div id="resultContainer" class="result-container">
                     <div class="result-header">
-                        <h2>转换结果：</h2>
-                        <button id="copyBtn" class="copy-btn">复制结果</button>
+                        <h2>转换结果</h2>
+                        <button id="copyBtn" class="copy-btn">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 4px;">
+                                <path d="M8 4V16C8 16.5304 8.21071 17.0391 8.58579 17.4142C8.96086 17.7893 9.46957 18 10 18H18C18.5304 18 19.0391 17.7893 19.4142 17.4142C19.7893 17.0391 20 16.5304 20 16V7.242C20 6.97556 19.9467 6.71181 19.8433 6.46624C19.7399 6.22068 19.5885 5.99824 19.398 5.812L16.188 2.602C15.8129 2.22698 15.3133 2.0157 14.792 2H10C9.46957 2 8.96086 2.21071 8.58579 2.58579C8.21071 2.96086 8 3.46957 8 4V4Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M16 18V20C16 20.5304 15.7893 21.0391 15.4142 21.4142C15.0391 21.7893 14.5304 22 14 22H6C5.46957 22 4.96086 21.7893 4.58579 21.4142C4.21071 21.0391 4 20.5304 4 20V8C4 7.46957 4.21071 6.96086 4.58579 6.58579C4.96086 6.21071 5.46957 6 6 6H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            复制结果
+                        </button>
                     </div>
                     <pre id="resultOutput">/* 转换结果将显示在这里 */</pre>
                 </div>
             </div>
         </div>
         
-        <div class="example">
-            <h3>示例：</h3>
+        <div class="example card">
+            <h3>示例</h3>
             <p>输入CSS代码（设计稿宽度：1280px）：</p>
             <pre>.youtube-video-slider-container .swiper-scrollbar {
   height: 6px;
@@ -264,7 +394,7 @@
         </div>
         
         <div class="footer">
-            <p>注意：此工具使用CSS解析库，能够处理各种复杂的CSS规则和选择器。</p>
+            <p>基于CSS-Tree解析库，能准确处理各种复杂CSS规则和选择器</p>
         </div>
     </div>
     
