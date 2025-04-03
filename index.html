@@ -409,6 +409,36 @@
             />
           </div>
 
+          <div class="form-group">
+            <label for="mediaQueryWrapper">添加媒体查询包装</label>
+            <div style="display: flex; gap: 10px; align-items: center;">
+              <input type="checkbox" id="enableMediaQuery" style="width: 20px; height: 20px;" />
+              <label for="enableMediaQuery" style="margin-bottom: 0;">启用媒体查询</label>
+            </div>
+          </div>
+
+          <div id="mediaQueryOptions" style="display: none; margin-bottom: 20px;">
+            <div style="display: flex; gap: 16px; margin-bottom: 10px;">
+              <div style="flex: 1;">
+                <label for="breakpointWidth">断点宽度 (px)</label>
+                <input
+                  type="number"
+                  id="breakpointWidth"
+                  class="width-input"
+                  placeholder="例如：768"
+                  value="768"
+                />
+              </div>
+              <div style="flex: 1;">
+                <label for="mediaQueryType">查询类型</label>
+                <select id="mediaQueryType" class="width-input">
+                  <option value="min">min-width (大于等于)</option>
+                  <option value="max">max-width (小于等于)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
           <button id="convertBtn" class="btn">转换</button>
 
           <div id="loading" class="loading">
@@ -477,6 +507,20 @@
   margin-top: 1.172vw;
 }</pre
             >
+          </div>
+        </div>
+
+        <div class="example-content" style="margin-top: 20px;">
+          <div class="example-block">
+            <p>使用媒体查询包装（断点：768px, 类型：max-width）：</p>
+            <pre>
+@media (max-width: 768px) {
+  .youtube-video-slider-container .swiper-scrollbar {
+    height: 0.469vw;
+    border-radius: 0.234vw;
+    margin-top: 1.172vw;
+  }
+}</pre
           </div>
         </div>
       </div>
@@ -647,6 +691,21 @@
             return;
           }
 
+          // 媒体查询相关参数
+          const enableMediaQuery = document.getElementById("enableMediaQuery").checked;
+          let breakpointWidth = 0;
+          let mediaQueryType = "min";
+
+          if (enableMediaQuery) {
+            breakpointWidth = parseFloat(document.getElementById("breakpointWidth").value);
+            mediaQueryType = document.getElementById("mediaQueryType").value;
+
+            if (!breakpointWidth || isNaN(breakpointWidth) || breakpointWidth <= 0) {
+              showAlert("请输入有效的断点宽度", "error");
+              return;
+            }
+          }
+
           // 显示加载状态
           loading.style.display = "block";
           // 不再隐藏结果容器，只清空内容
@@ -655,7 +714,13 @@
           // 使用setTimeout来确保UI更新
           setTimeout(function () {
             try {
-              const result = convertPxToVw(css, width);
+              let result = convertPxToVw(css, width);
+              
+              // 如果启用了媒体查询，添加媒体查询包装
+              if (enableMediaQuery) {
+                result = wrapWithMediaQuery(result, breakpointWidth, mediaQueryType);
+              }
+              
               resultOutput.textContent = result;
               showAlert("转换成功！", "success");
             } catch (error) {
@@ -678,6 +743,12 @@
               showAlert("复制失败，请手动复制", "error");
             }
           );
+        });
+
+        // 媒体查询复选框事件
+        document.getElementById("enableMediaQuery").addEventListener("change", function() {
+          const mediaQueryOptions = document.getElementById("mediaQueryOptions");
+          mediaQueryOptions.style.display = this.checked ? "block" : "none";
         });
 
         // 显示提示消息
@@ -853,6 +924,25 @@
             console.error("CSS解析错误:", error);
             throw new Error("CSS解析失败，请检查您的CSS语法");
           }
+        }
+
+        // 包装媒体查询函数
+        function wrapWithMediaQuery(css, breakpoint, type) {
+          const mediaQueryStart = `@media (${type}-width: ${breakpoint}px) {`;
+          const mediaQueryEnd = '}';
+          
+          // 添加媒体查询包装
+          let result = mediaQueryStart + '\n';
+          
+          // 每行缩进
+          const lines = css.split('\n');
+          for (const line of lines) {
+            result += '  ' + line + '\n';
+          }
+          
+          result += mediaQueryEnd;
+          
+          return result;
         }
       }
     </script>
