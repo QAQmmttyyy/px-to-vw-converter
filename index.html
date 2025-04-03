@@ -3,7 +3,50 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>像素(px)转vw单位工具</title>
+    <title>像素(px)转vw单位工具 - CSS响应式设计转换器</title>
+    <meta
+      name="description"
+      content="免费在线CSS像素(px)转vw单位工具，轻松实现响应式网页设计。支持媒体查询包装，可定制断点宽度，一键转换所有CSS像素值。"
+    />
+    <meta
+      name="keywords"
+      content="px转vw,像素转vw,CSS单位转换,响应式设计,媒体查询,CSS工具,网页设计工具"
+    />
+    <meta name="author" content="前端开发工具" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://px-to-vw-converter.netlify.app/" />
+    <!-- Open Graph / 社交媒体元标签 -->
+    <meta
+      property="og:title"
+      content="像素(px)转vw单位工具 - CSS响应式设计转换器"
+    />
+    <meta
+      property="og:description"
+      content="免费在线CSS像素(px)转vw单位工具，轻松实现响应式网页设计。支持媒体查询包装，可定制断点宽度。"
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://px-to-vw-converter.netlify.app/" />
+    <meta
+      property="og:image"
+      content="https://px-to-vw-converter.netlify.app/preview.jpg"
+    />
+    <!-- 结构化数据 Schema.org -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "CSS像素(px)转vw单位工具",
+        "description": "免费在线CSS像素(px)转vw单位工具，轻松实现响应式网页设计。支持媒体查询包装，可定制断点宽度。",
+        "url": "https://px-to-vw-converter.netlify.app/",
+        "applicationCategory": "开发工具",
+        "operatingSystem": "全平台",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "CNY"
+        }
+      }
+    </script>
     <style>
       :root {
         --bg-color: #fff;
@@ -379,116 +422,143 @@
             <strong>转换规则：</strong
             >仅转换包含px单位的属性，转换结果只保留需要转换的规则和包含它的声明块。
           </p>
+          <p>
+            <strong>新功能：</strong
+            >支持媒体查询包装，可以指定断点宽度和查询类型。
+          </p>
         </div>
       </header>
 
-      <div id="alertBox" class="alert"></div>
+      <main>
+        <div id="alertBox" class="alert"></div>
 
-      <div class="main-content">
-        <div class="card">
-          <div class="form-group">
-            <label for="cssInput">输入CSS代码</label>
-            <textarea
-              id="cssInput"
-              class="input-area"
-              placeholder="请在此粘贴您的CSS代码..."
-              spellcheck="false"
-              autocorrect="off"
-              autocapitalize="off"
-            ></textarea>
-          </div>
-
-          <div class="form-group">
-            <label for="designWidth">设计稿宽度 (px)</label>
-            <input
-              type="number"
-              id="designWidth"
-              class="width-input"
-              placeholder="例如：1280"
-              value="1280"
-            />
-          </div>
-
-          <div class="form-group">
-            <label for="mediaQueryWrapper">添加媒体查询包装</label>
-            <div style="display: flex; gap: 10px; align-items: center;">
-              <input type="checkbox" id="enableMediaQuery" style="width: 20px; height: 20px;" />
-              <label for="enableMediaQuery" style="margin-bottom: 0;">启用媒体查询</label>
+        <div class="main-content">
+          <div class="card">
+            <div class="form-group">
+              <label for="cssInput">输入CSS代码</label>
+              <textarea
+                id="cssInput"
+                class="input-area"
+                placeholder="请在此粘贴您的CSS代码..."
+                spellcheck="false"
+                autocorrect="off"
+                autocapitalize="off"
+                aria-label="CSS输入区域"
+              ></textarea>
             </div>
-          </div>
 
-          <div id="mediaQueryOptions" style="display: none; margin-bottom: 20px;">
-            <div style="display: flex; gap: 16px; margin-bottom: 10px;">
-              <div style="flex: 1;">
-                <label for="breakpointWidth">断点宽度 (px)</label>
+            <div class="form-group">
+              <label for="designWidth">设计稿宽度 (px)</label>
+              <input
+                type="number"
+                id="designWidth"
+                class="width-input"
+                placeholder="例如：1280"
+                value="1280"
+                aria-label="设计稿宽度"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="mediaQueryWrapper">添加媒体查询包装</label>
+              <div style="display: flex; gap: 10px; align-items: center">
                 <input
-                  type="number"
-                  id="breakpointWidth"
-                  class="width-input"
-                  placeholder="例如：768"
-                  value="768"
+                  type="checkbox"
+                  id="enableMediaQuery"
+                  style="width: 20px; height: 20px"
+                  aria-label="启用媒体查询"
                 />
-              </div>
-              <div style="flex: 1;">
-                <label for="mediaQueryType">查询类型</label>
-                <select id="mediaQueryType" class="width-input">
-                  <option value="min">min-width (大于等于)</option>
-                  <option value="max">max-width (小于等于)</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <button id="convertBtn" class="btn">转换</button>
-
-          <div id="loading" class="loading">
-            <div class="loading-spinner"></div>
-            <p>正在处理中...</p>
-          </div>
-        </div>
-
-        <div class="card">
-          <div id="resultContainer" class="result-container">
-            <div class="result-header">
-              <label>转换结果</label>
-              <button id="copyBtn" class="copy-btn">
-                <svg
-                  width="14"
-                  height="14"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  style="margin-right: 4px"
+                <label for="enableMediaQuery" style="margin-bottom: 0"
+                  >启用媒体查询</label
                 >
-                  <path
-                    d="M8 4V16C8 16.5304 8.21071 17.0391 8.58579 17.4142C8.96086 17.7893 9.46957 18 10 18H18C18.5304 18 19.0391 17.7893 19.4142 17.4142C19.7893 17.0391 20 16.5304 20 16V7.242C20 6.97556 19.9467 6.71181 19.8433 6.46624C19.7399 6.22068 19.5885 5.99824 19.398 5.812L16.188 2.602C15.8129 2.22698 15.3133 2.0157 14.792 2H10C9.46957 2 8.96086 2.21071 8.58579 2.58579C8.21071 2.96086 8 3.46957 8 4V4Z"
-                    stroke="white"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                  <path
-                    d="M16 18V20C16 20.5304 15.7893 21.0391 15.4142 21.4142C15.0391 21.7893 14.5304 22 14 22H6C5.46957 22 4.96086 21.7893 4.58579 21.4142C4.21071 21.0391 4 20.5304 4 20V8C4 7.46957 4.21071 6.96086 4.58579 6.58579C4.96086 6.21071 5.46957 6 6 6H8"
-                    stroke="white"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </svg>
-                复制结果
-              </button>
+              </div>
             </div>
-            <pre id="resultOutput">/* 转换结果将显示在这里 */</pre>
+
+            <div
+              id="mediaQueryOptions"
+              style="display: none; margin-bottom: 20px"
+            >
+              <div style="display: flex; gap: 16px; margin-bottom: 10px">
+                <div style="flex: 1">
+                  <label for="breakpointWidth">断点宽度 (px)</label>
+                  <input
+                    type="number"
+                    id="breakpointWidth"
+                    class="width-input"
+                    placeholder="例如：768"
+                    value="768"
+                    aria-label="断点宽度"
+                  />
+                </div>
+                <div style="flex: 1">
+                  <label for="mediaQueryType">查询类型</label>
+                  <select
+                    id="mediaQueryType"
+                    class="width-input"
+                    aria-label="媒体查询类型"
+                  >
+                    <option value="min">min-width (大于等于)</option>
+                    <option value="max">max-width (小于等于)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <button id="convertBtn" class="btn" aria-label="转换按钮">
+              转换
+            </button>
+
+            <div id="loading" class="loading" aria-live="polite">
+              <div class="loading-spinner" aria-hidden="true"></div>
+              <p>正在处理中...</p>
+            </div>
+          </div>
+
+          <div class="card">
+            <div id="resultContainer" class="result-container">
+              <div class="result-header">
+                <label>转换结果</label>
+                <button id="copyBtn" class="copy-btn" aria-label="复制结果">
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    style="margin-right: 4px"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M8 4V16C8 16.5304 8.21071 17.0391 8.58579 17.4142C8.96086 17.7893 9.46957 18 10 18H18C18.5304 18 19.0391 17.7893 19.4142 17.4142C19.7893 17.0391 20 16.5304 20 16V7.242C20 6.97556 19.9467 6.71181 19.8433 6.46624C19.7399 6.22068 19.5885 5.99824 19.398 5.812L16.188 2.602C15.8129 2.22698 15.3133 2.0157 14.792 2H10C9.46957 2 8.96086 2.21071 8.58579 2.58579C8.21071 2.96086 8 3.46957 8 4V4Z"
+                      stroke="white"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M16 18V20C16 20.5304 15.7893 21.0391 15.4142 21.4142C15.0391 21.7893 14.5304 22 14 22H6C5.46957 22 4.96086 21.7893 4.58579 21.4142C4.21071 21.0391 4 20.5304 4 20V8C4 7.46957 4.21071 6.96086 4.58579 6.58579C4.96086 6.21071 5.46957 6 6 6H8"
+                      stroke="white"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                  复制结果
+                </button>
+              </div>
+              <pre id="resultOutput" aria-live="polite">
+/* 转换结果将显示在这里 */</pre
+              >
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="example card">
-        <h3>示例</h3>
-        <div class="example-content">
-          <div class="example-block">
-            <p>输入CSS代码（设计稿宽度：1280px）：</p>
-            <pre>
+        <section class="example card">
+          <h2>使用示例</h2>
+          <div class="example-content">
+            <div class="example-block">
+              <p>输入CSS代码（设计稿宽度：1280px）：</p>
+              <pre>
 .youtube-video-slider-container .swiper-scrollbar {
   height: 6px;
   background-color: rgba(212, 141, 2, 0.1);
@@ -496,24 +566,24 @@
   position: relative;
   margin-top: 15px;
 }</pre
-            >
-          </div>
-          <div class="example-block">
-            <p>转换结果：</p>
-            <pre>
+              >
+            </div>
+            <div class="example-block">
+              <p>转换结果：</p>
+              <pre>
 .youtube-video-slider-container .swiper-scrollbar {
   height: 0.469vw;
   border-radius: 0.234vw;
   margin-top: 1.172vw;
 }</pre
-            >
+              >
+            </div>
           </div>
-        </div>
 
-        <div class="example-content" style="margin-top: 20px;">
-          <div class="example-block">
-            <p>使用媒体查询包装（断点：768px, 类型：max-width）：</p>
-            <pre>
+          <div class="example-content" style="margin-top: 20px">
+            <div class="example-block">
+              <p>使用媒体查询包装（断点：768px, 类型：max-width）：</p>
+              <pre>
 @media (max-width: 768px) {
   .youtube-video-slider-container .swiper-scrollbar {
     height: 0.469vw;
@@ -521,13 +591,33 @@
     margin-top: 1.172vw;
   }
 }</pre
+              >
+            </div>
           </div>
-        </div>
-      </div>
+        </section>
 
-      <div class="footer">
+        <section class="card" style="margin-top: 30px">
+          <h2>为什么使用vw单位？</h2>
+          <p>
+            vw（viewport
+            width）是CSS3引入的视口相关单位，1vw等于视口宽度的1%。使用vw单位有以下优势：
+          </p>
+          <ul style="padding-left: 20px; margin: 15px 0">
+            <li>更好的响应式设计：元素大小会自动随视口宽度变化</li>
+            <li>简化媒体查询：减少对多个断点的依赖</li>
+            <li>更精确的缩放：不再局限于固定断点</li>
+            <li>更统一的用户体验：在各种设备上保持一致的比例</li>
+          </ul>
+          <p>
+            本工具可帮助您轻松将现有的px单位CSS转换为vw单位，并可选择性地添加媒体查询包装。
+          </p>
+        </section>
+      </main>
+
+      <footer class="footer">
         <p>基于CSS-Tree解析库，能准确处理各种复杂CSS规则和选择器</p>
-      </div>
+        <p>© 2025 像素(px)转vw单位工具 - 保留所有权利</p>
+      </footer>
     </div>
 
     <!-- 引入CSS解析库 - 使用多个CDN源 -->
@@ -692,15 +782,22 @@
           }
 
           // 媒体查询相关参数
-          const enableMediaQuery = document.getElementById("enableMediaQuery").checked;
+          const enableMediaQuery =
+            document.getElementById("enableMediaQuery").checked;
           let breakpointWidth = 0;
           let mediaQueryType = "min";
 
           if (enableMediaQuery) {
-            breakpointWidth = parseFloat(document.getElementById("breakpointWidth").value);
+            breakpointWidth = parseFloat(
+              document.getElementById("breakpointWidth").value
+            );
             mediaQueryType = document.getElementById("mediaQueryType").value;
 
-            if (!breakpointWidth || isNaN(breakpointWidth) || breakpointWidth <= 0) {
+            if (
+              !breakpointWidth ||
+              isNaN(breakpointWidth) ||
+              breakpointWidth <= 0
+            ) {
               showAlert("请输入有效的断点宽度", "error");
               return;
             }
@@ -715,12 +812,16 @@
           setTimeout(function () {
             try {
               let result = convertPxToVw(css, width);
-              
+
               // 如果启用了媒体查询，添加媒体查询包装
               if (enableMediaQuery) {
-                result = wrapWithMediaQuery(result, breakpointWidth, mediaQueryType);
+                result = wrapWithMediaQuery(
+                  result,
+                  breakpointWidth,
+                  mediaQueryType
+                );
               }
-              
+
               resultOutput.textContent = result;
               showAlert("转换成功！", "success");
             } catch (error) {
@@ -746,10 +847,13 @@
         });
 
         // 媒体查询复选框事件
-        document.getElementById("enableMediaQuery").addEventListener("change", function() {
-          const mediaQueryOptions = document.getElementById("mediaQueryOptions");
-          mediaQueryOptions.style.display = this.checked ? "block" : "none";
-        });
+        document
+          .getElementById("enableMediaQuery")
+          .addEventListener("change", function () {
+            const mediaQueryOptions =
+              document.getElementById("mediaQueryOptions");
+            mediaQueryOptions.style.display = this.checked ? "block" : "none";
+          });
 
         // 显示提示消息
         function showAlert(message, type) {
@@ -929,19 +1033,19 @@
         // 包装媒体查询函数
         function wrapWithMediaQuery(css, breakpoint, type) {
           const mediaQueryStart = `@media (${type}-width: ${breakpoint}px) {`;
-          const mediaQueryEnd = '}';
-          
+          const mediaQueryEnd = "}";
+
           // 添加媒体查询包装
-          let result = mediaQueryStart + '\n';
-          
+          let result = mediaQueryStart + "\n";
+
           // 每行缩进
-          const lines = css.split('\n');
+          const lines = css.split("\n");
           for (const line of lines) {
-            result += '  ' + line + '\n';
+            result += "  " + line + "\n";
           }
-          
+
           result += mediaQueryEnd;
-          
+
           return result;
         }
       }
